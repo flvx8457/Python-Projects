@@ -3,13 +3,10 @@ import numpy as np
 import librosa
 import librosa.display
 import matplotlib
-matplotlib.use("Agg")  # ensures window display works on Linux/Chromebook
+matplotlib.use("Agg") 
 import matplotlib.pyplot as plt
 
 
-# -----------------------------
-# LOAD AUDIO
-# -----------------------------
 def load_audio(file_path, target_sr=32000):
     """Load audio file and standardize sample rate"""
     try:
@@ -26,13 +23,11 @@ def load_audio(file_path, target_sr=32000):
         return None, None
 
 
-# -----------------------------
-# CREATE + SHOW + SAVE SPECTROGRAM
-# -----------------------------
+
 def create_spectrogram(y, sr, output_path=None, title="Spectrogram"):
     """Generate mel spectrogram, display it, and optionally save it"""
 
-    # Convert audio → mel spectrogram
+    # Convert audio to mel spectrogram
     S = librosa.feature.melspectrogram(
         y=y,
         sr=sr,
@@ -40,7 +35,7 @@ def create_spectrogram(y, sr, output_path=None, title="Spectrogram"):
         fmax=16000
     )
 
-    # Convert power → decibels
+   
     S_dB = librosa.power_to_db(S, ref=np.max)
 
     # Plot
@@ -57,18 +52,16 @@ def create_spectrogram(y, sr, output_path=None, title="Spectrogram"):
     plt.title(title)
     plt.tight_layout()
 
-    # SAVE IMAGE (for ML dataset)
+
     if output_path:
         plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
 
-    # SHOW IMAGE (for viewing)
+   
     plt.savefig(output_path, bbox_inches="tight", pad_inches=0)
 plt.close()
 
 
-# -----------------------------
-# OPTIONAL: FIX LENGTH (VERY IMPORTANT FOR ML)
-# -----------------------------
+
 def fix_length(y, sr, seconds=5):
     """Trim or pad audio to fixed length"""
     target_len = seconds * sr
@@ -81,9 +74,7 @@ def fix_length(y, sr, seconds=5):
     return y
 
 
-# -----------------------------
-# MAIN PROGRAM
-# -----------------------------
+
 def main():
     print("🎧 Audio → Spectrogram Converter (ML Ready)\n")
 
@@ -93,20 +84,19 @@ def main():
         print("❌ File not found. Put it in the same folder as this script.")
         return
 
-    # Load audio
+   
     y, sr = load_audio(file_path)
 
     if y is None:
         return
 
-    # Fix length for consistency (important for training models)
+   
     y = fix_length(y, sr, seconds=5)
 
-    # Create output file name
+   
     base_name = os.path.splitext(os.path.basename(file_path))[0]
     output_file = f"{base_name}_spectrogram.png"
 
-    # Generate spectrogram
     create_spectrogram(
         y,
         sr,
